@@ -39,3 +39,6 @@ pids/
 
 # Optional: Dependency scan results
 node_modules/.cach_
+
+/src/generated/prisma
+/prisma/migrations
