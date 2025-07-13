@@ -1,6 +1,6 @@
 # Node modules
 node_modules/
-
+node_modules
 # Output directories
 dist/
 build/
@@ -21,7 +21,6 @@ Thumbs.db
 
 # Env files
 .env
-.env.*
 
 # IDE configs
 .vscode/
