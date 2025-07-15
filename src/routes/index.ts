@@ -1,5 +1,6 @@
 import { Request, Response, Router } from "express";
 import authRoutes from "./auth.routes";
+import adminRoutes from "./admin.routes";
 import { authenticate } from "../middlewares/auth";
 import { requireAdmin } from "../middlewares/requireAdmin";
 const router = Router();
@@ -17,5 +18,5 @@ router.get("/auth-admin", requireAdmin, (req: Request, res: Response) => {
 });
 
 router.use("/auth", authRoutes);
-
+router.use("/admin", adminRoutes);
 export default router;
