@@ -1,7 +1,12 @@
 import { Request, Response, Router } from "express";
 import authRoutes from "./auth.routes";
 import adminRoutes from "./admin.routes";
+import utilsRoutes from "./utils.routes";
+import studentRoutes from "./student.routes";
+import teacherRoutes from "./teacher.routes";
+
 import { authenticate } from "../middlewares/auth";
+
 import { requireAdmin } from "../middlewares/requireAdmin";
 const router = Router();
 
@@ -19,4 +24,7 @@ router.get("/auth-admin", requireAdmin, (req: Request, res: Response) => {
 
 router.use("/auth", authRoutes);
 router.use("/admin", adminRoutes);
+router.use("/student", studentRoutes);
+router.use("/teacher", teacherRoutes);
+router.use("/", utilsRoutes);
 export default router;

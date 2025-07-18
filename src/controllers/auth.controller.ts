@@ -51,7 +51,24 @@ export const signup = async (req: Request, res: Response) => {
         bio: "",
       },
     });
-
+    const safeUser = await prisma.user.findUnique({
+      where: {
+        id: user.id,
+      },
+      omit: {
+        password: true,
+      },
+      include: {
+        roles: {
+          include: {
+            role: true,
+          },
+        },
+        studentProfile: true,
+        teacherProfile: true,
+        adminProfile: true,
+      },
+    });
     // 7. Generate JWT token
     const token = jwt.sign(
       {
@@ -66,7 +83,7 @@ export const signup = async (req: Request, res: Response) => {
       }
     );
     res.header("Authorization", `Bearer ${token}`);
-    res.status(201).json({ user, token });
+    res.status(201).json({ user: safeUser, token });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }
@@ -79,6 +96,16 @@ export const login = async (req: Request, res: Response) => {
 
     const user = await prisma.user.findUnique({
       where: { email },
+      include: {
+        roles: {
+          include: {
+            role: true,
+          },
+        },
+        studentProfile: true,
+        teacherProfile: true,
+        adminProfile: true,
+      },
     });
 
     if (!user) {
@@ -89,7 +116,7 @@ export const login = async (req: Request, res: Response) => {
     if (!valid) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
-
+    const { password: String, ...safeuser } = user;
     const token = jwt.sign(
       {
         id: user.id,
@@ -103,7 +130,7 @@ export const login = async (req: Request, res: Response) => {
       }
     );
     res.header("Authorization", `Bearer ${token}`);
-    res.status(200).json({ user, token });
+    res.status(200).json({ user: safeuser, token });
   } catch (err: any) {
     res.status(500).json({ error: err.message });
   }

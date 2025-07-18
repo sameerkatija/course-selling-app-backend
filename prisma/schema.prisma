@@ -50,25 +50,65 @@ model UserRole {
 }
 
 model StudentProfile {
-  id       String   @id @default(uuid())
-  user     User     @relation(fields: [userId], references: [id])
-  userId   String   @unique
-  bio      String?
+  id           String   @id @default(uuid())
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId       String   @unique
+  bio          String?
+  enrollments  Enrollment[]
+}
+
+enum TeacherStatus {
+  PENDING
+  APPROVED
+  REJECTED
 }
 
 model TeacherProfile {
   id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id],onDelete: Cascade)
   userId    String   @unique
   bio       String?
   expertise String[] // Tags like 'React', 'Python'
-  status    String   // 'pending', 'approved', 'rejected'
+  status    TeacherStatus  @default(PENDING)  // 'pending', 'approved', 'rejected'
   rating    Float?
+  courses   Course[]
 }
 
 model AdminProfile {
   id        String   @id @default(uuid())
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String   @unique
   isSuper   Boolean  @default(false)
+}
+
+model Course {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  price       Float
+  thumbnail   String?
+  teacher     TeacherProfile     @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  teacherId   String
+  lessons     Lesson[]
+  enrollments Enrollment[]
+  createdAt   DateTime @default(now())
+}
+
+model Lesson {
+  id        String   @id @default(uuid())
+  title     String
+  content   String // can be video URL or markdown
+  course    Course  @relation(fields: [courseId], references: [id],onDelete: Cascade)
+  courseId  String
+  order     Int
+}
+
+model Enrollment {
+  id         String   @id @default(uuid())
+  student    StudentProfile     @relation(fields: [studentId], references: [id],onDelete: Cascade)
+  studentId  String
+  course     Course   @relation(fields: [courseId], references: [id],onDelete: Cascade)
+  courseId   String
+  progress   Float    @default(0.0)
+  enrolledAt DateTime @default(now())
 }
