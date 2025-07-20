@@ -46,6 +46,34 @@ export const adminDashboard = async (req: Request, res: Response) => {
   }
 };
 
+export const getAllUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await prisma.user.findMany({
+      include: {
+        roles: {
+          include: {
+            role: true,
+          },
+        },
+        studentProfile: true,
+        adminProfile: true,
+        teacherProfile: true,
+      },
+      omit: {
+        password: true,
+      },
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    res.json({ users });
+  } catch (err) {
+    console.error("Error fetching Users:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 export const getAllStudents = async (req: Request, res: Response) => {
   try {
     // Fetch roleId for 'student'
@@ -162,6 +190,22 @@ export const getAllAdmins = async (req: Request, res: Response) => {
     res.json({ admins });
   } catch (err) {
     console.error("Error fetching students:", err);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+// get all courses
+export const getAllCourses = async (req: Request, res: Response) => {
+  try {
+    const courses = await prisma.course.findMany({
+      orderBy: {
+        createdAt: "desc",
+      },
+    });
+
+    res.json({ courses });
+  } catch (err) {
+    console.error("Error fetching Courses:", err);
     res.status(500).json({ error: "Internal server error" });
   }
 };

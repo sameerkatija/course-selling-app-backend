@@ -6,8 +6,10 @@ import {
   createStudent,
   createTeacher,
   getAllAdmins,
+  getAllCourses,
   getAllStudents,
   getAllTeachers,
+  getAllUsers,
 } from "../controllers/admin.controller";
 import validateRequest from "../middlewares/validateZodSchema";
 import { addTeacher, userSchema } from "../utils/zodSchema";
@@ -19,6 +21,8 @@ router.get("/dashboard", adminDashboard);
 router.get("/students", getAllStudents);
 router.get("/teachers", getAllTeachers);
 router.get("/admins", getAllAdmins);
+router.get("/users", getAllUsers);
+router.get("/courses", getAllCourses);
 router.post("/create-student", validateRequest(userSchema), createStudent);
 router.post("/create-teacher", validateRequest(addTeacher), createTeacher);
 router.post("/create-admin", validateRequest(addTeacher), createAdmin);
